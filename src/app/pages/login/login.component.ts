@@ -1,6 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { TokenData } from '../../model/tokendata';
+import { Login } from '../../model/login';
+import { LoginService } from '../../service/login/login.service';
 
 @Component({
   selector: 'app-login',
@@ -13,30 +16,25 @@ export class LoginComponent {
 
   login: Login;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private router: Router,
+    private loginService: LoginService) {
     this.login = new Login();
   }
 
   onSubmit() {
-    this.http.post('http://localhost:8080/auth/signin', this.login)
+    this.loginService.authenticate(this.login)
       .subscribe({
-        next: (res: any) => {
-          if(res.authenticated) [
-            alert('Login realizado com sucesso.')
-          ]
+        next: (res: TokenData) => {
+          if(res.authenticated) {
+            alert('Login realizado com sucesso.');
+            localStorage.setItem('token', JSON.stringify(res));
+            this.router.navigateByUrl('/users');
+          }
         },
         error: (err) => {
-          alert('Falha no Login! Verifique suas credenciais.')
+          alert('Falha no Login! Verifique suas credenciais.');
         }
-      })
-  }
-}
-
-export class Login {
-  username: string;
-  password: string;
-  constructor() {
-    this.username = '';
-    this.password = '';
+      });
   }
 }
