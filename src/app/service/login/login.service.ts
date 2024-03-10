@@ -14,6 +14,8 @@ export class LoginService {
   private urlRefreshToken: string = 'http://localhost:8080/auth/refresh';
 
   public $refreshToken = new Subject<boolean>;
+  public $tokenRefreshed = new Subject<boolean>;
+
   private http: HttpClient;
 
   constructor(private handler: HttpBackend) {
@@ -34,6 +36,7 @@ export class LoginService {
       .subscribe({
         next: ((res: TokenData) => {
           localStorage.setItem('token', JSON.stringify(res));
+          this.$tokenRefreshed.next(true);
         })
       });
   }

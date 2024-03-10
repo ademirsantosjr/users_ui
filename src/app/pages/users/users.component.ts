@@ -1,8 +1,9 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { IUser } from '../../model/user';
 import { UserService } from '../../service/users/user.service';
+import { LoginService } from '../../service/login/login.service';
 
 @Component({
   selector: 'app-users',
@@ -15,8 +16,12 @@ export class UsersComponent implements OnInit {
 
   users: IUser[]=[];
 
-  constructor(private userService: UserService) {
-    
+  constructor(private userService: UserService, private loginService: LoginService) {
+    this.loginService.$tokenRefreshed.subscribe({
+      next: (res: any) => {
+        this.getAllUsers();
+      }
+    });
   }
 
   ngOnInit(): void {
