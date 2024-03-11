@@ -1,0 +1,12 @@
+<form>
+    <h1>Login</h1>
+    <mat-form-field appearance="outline">
+        <mat-label>Usuário</mat-label>
+        <input matInput name="username" placeholder="Ex: joao_silva" [(ngModel)]="login.username">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" name="password" placeholder="sua senha" [(ngModel)]="login.password">
+    </mat-form-field>
+    <button type="submit" mat-flat-button color="primary" (click)="onSubmit()">Login</button>
+</form>
