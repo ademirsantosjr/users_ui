@@ -1,11 +1,12 @@
 <form>
-    <div class="form-group">
-        <label for="inputUser" >Usuário</label>
-        <input [(ngModel)]="login.username" name="username" type="text" class="form-control" id="inputUser" placeholder="Informe seu nome de usuário">
-    </div>
-    <div class="form-group">
-        <label for="inputPassword">Password</label>
-        <input [(ngModel)]="login.password" name="password" type="password" class="form-control" id="inputPassword" placeholder="Senha">
-    </div>
-    <button type="submit" class="btn btn-primary" (click)="onSubmit()">Login</button>
+    <h1>Login</h1>
+    <mat-form-field appearance="outline">
+        <mat-label>Usuário</mat-label>
+        <input matInput name="username" placeholder="Ex: joao_silva" [(ngModel)]="login.username">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput type="password" name="password" placeholder="sua senha" [(ngModel)]="login.password">
+    </mat-form-field>
+    <button type="submit" mat-flat-button color="primary" (click)="onSubmit()">Login</button>
 </form>

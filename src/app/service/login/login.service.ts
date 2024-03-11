@@ -31,6 +31,7 @@ export class LoginService {
   }
 
   refreshToken(): void {
+    debugger;
     const url = this.urlRefreshToken;
     this.http.put<TokenData>(url, this.getRefreshToken())
       .subscribe({
