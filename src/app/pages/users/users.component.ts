@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { IUser } from '../../model/user';
 import { UserService } from '../../service/users/user.service';
 import { LoginService } from '../../service/login/login.service';
@@ -10,6 +10,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { IPage } from '../../dto/pageusers';
 import { FormControl } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { distinctUntilChanged, fromEvent, switchMap, tap } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-users',
@@ -19,7 +22,8 @@ import { FormControl } from '@angular/forms';
     MatInputModule,
     MatPaginatorModule, 
     MatTableModule, 
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
@@ -31,10 +35,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<IUser>;
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+  readonly pageIndexDefault = 0;
+  readonly pageSizeDefault = 5;
   length: number = 0;
-  pageIndex: number = 0;
-  pageSize: number = 5;
+  pageIndex: number = this.pageIndexDefault;
+  pageSize: number = this.pageSizeDefault;
 
+  @ViewChild('filter', { static: true }) filter!: ElementRef;
   searchFormControl = new FormControl('');
 
   constructor(private userService: UserService, private loginService: LoginService) {
@@ -50,6 +57,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.addEventToFilter();
     this.getAllUsers();
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
     this.paginator._intl.previousPageLabel = 'Página anterior';
@@ -80,6 +88,34 @@ export class UsersComponent implements OnInit, AfterViewInit {
           alert('Erro ao carregar a lista de usuários!')
         }
       });
+  }
+
+  addNew() {
+
+  }
+
+  addEventToFilter() {
+    fromEvent(this.filter.nativeElement, 'input').pipe(
+      distinctUntilChanged(),
+      switchMap(() => {
+        if (this.filter.nativeElement.value) {
+          const usernameOrEmail = this.filter.nativeElement.value
+          return this.userService.findByUsernameOrEmail(
+            usernameOrEmail, this.pageIndexDefault, this.pageSizeDefault);
+        }
+        return this.userService.findAll(this.pageIndexDefault, this.pageSizeDefault);
+      })
+    ).subscribe((page: IPage<IUser>) => {
+      if (!this.dataSource) {
+        return;
+      }
+      this.paginator.pageIndex = 0;
+      this.pageIndex = 0;
+
+      this.dataSource = new MatTableDataSource<IUser>(page.content);
+      this.length = page.totalElements;
+
+    });
   }
 
   private rangeTranslate = (page: number, pageSize: number, length: number) => {
