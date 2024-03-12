@@ -1,7 +1,13 @@
-<mat-form-field appearance="outline">
-  <mat-label>Pesquisar...</mat-label>
-  <input matInput name="username" placeholder="Anna" formControlName="searchFormControl">
-</mat-form-field>
+<div id="search-area">
+  <button class="search-bar-button " mat-flat-button color="accent" (click)="addNew()">
+    <mat-icon>add</mat-icon>
+    Novo
+  </button>
+  <mat-form-field appearance="outline">
+    <mat-label>Pesquisar...</mat-label>
+    <input matInput #filter name="username" placeholder="Nome ou email...">
+  </mat-form-field>
+</div>
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource">
 
