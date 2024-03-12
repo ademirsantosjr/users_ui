@@ -23,7 +23,6 @@ export const customInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(cloneRequest).pipe(
     catchError((error: HttpErrorResponse) => {
-      debugger;
       if (error.status === 403) {
         const isRefresh = confirm('A sessão expirou. Deseja permanecer logado?')
         if (isRefresh) {
