@@ -1,5 +1,5 @@
 <div id="search-area">
-  <button class="search-bar-button " mat-flat-button color="accent" (click)="addNew()">
+  <button class="search-bar-button " mat-flat-button color="accent" (click)="create()">
     <mat-icon>add</mat-icon>
     Novo
   </button>
@@ -29,7 +29,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Ações </th>
       <td mat-cell *matCellDef="let user">
-        <button mat-stroked-button class="action-button" >Editar</button>
+        <button mat-stroked-button class="action-button" (click)="edit(user)" >Editar</button>
         <button mat-stroked-button color="warn" class="action-button" (click)="delete(user)">Remover</button>
       </td>
     </ng-container>

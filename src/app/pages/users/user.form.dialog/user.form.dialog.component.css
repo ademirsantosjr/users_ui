@@ -1,0 +1,7 @@
+form {
+    display: grid;
+}
+
+.mat-mdc-dialog-actions {
+    margin: 0 0 12px 12px;
+}

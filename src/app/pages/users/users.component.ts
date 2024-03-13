@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { IUser } from '../../model/user';
 import { UserService } from '../../service/users/user.service';
 import { LoginService } from '../../service/login/login.service';
@@ -15,6 +15,7 @@ import { distinctUntilChanged, fromEvent, switchMap, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmacaoDialogComponent } from '../../modal/confirmacao.dialog/confirmacao.dialog.component';
 import { InfoDialogComponent } from '../../modal/info.dialog/info.dialog.component';
+import { UserFormDialogComponent } from './user.form.dialog/user.form.dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -44,7 +45,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
   pageSize: number = this.pageSizeDefault;
 
   @ViewChild('filter', { static: true }) filter!: ElementRef;
-  searchFormControl = new FormControl('');
 
   constructor(
     private userService: UserService, 
@@ -96,8 +96,64 @@ export class UsersComponent implements OnInit, AfterViewInit {
       });
   }
 
-  addNew() {
+  create() {
+    this.dialog.open(UserFormDialogComponent, {
+      data: {
+        title: 'Novo Usuário'
+      },
+      disableClose: true
+    })
+    .afterClosed().subscribe((user: IUser) => {
+      if (user == null) return;
+      this.userService.save(user)
+        .subscribe({
+          next: (user: IUser) => {
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'Tudo Certo!',
+                message: `
+                  Usuário '${user.name}' armazenado com sucesso!
+                `
+              }
+            });
+            this.getAllUsers();
+          },
+          error: (err) => {
+            console.log(err)
+            alert('Ops! Não foi possível salvar o usuário!');
+          } 
+        })
+    });
+  }
 
+  edit(user: IUser) {
+    const nameBeforeUpdate = user.name;
+    this.dialog.open(UserFormDialogComponent, {
+      data: {
+        title: 'Editar Usuário',
+        user: {name: user.name, email: user.email, profile: user.profile} as IUser
+      },
+      disableClose: true
+    })
+    .afterClosed().subscribe((user: IUser) => {
+      this.userService.updateByName(user, nameBeforeUpdate)
+        .subscribe({
+          next: () => {
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'Tudo Certo!',
+                message: `
+                  Usuário atualizado com sucesso!
+                `
+              }
+            });
+            this.getAllUsers();
+          },
+          error: (err) => {
+            alert('Ops! Houve um erro ao atualizar o usuário.');
+          } 
+        })
+    });
   }
 
   delete(user: IUser) {
@@ -126,7 +182,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
               this.getAllUsers();
             },
             error: (err) => {
-              alert('Ops! Houve um erro ao tentar remover o usuário.');
+              alert('Ops! Houve um erro ao remover o usuário.');
             }
           });
       }

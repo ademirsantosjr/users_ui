@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>{{ title }}</h1>
+<form mat-dialog-content style="padding-top: 8px; padding-bottom: 0px;">
+    <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput name="username" placeholder="Ex: maria.joana" [(ngModel)]="user.name">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput type="email" name="email" placeholder="email" [(ngModel)]="user.email">
+    </mat-form-field>
+    @if (!this.data.user) {
+        <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input matInput type="password" name="password" placeholder="perfil" [(ngModel)]="user.password">
+        </mat-form-field>
+    }
+    <mat-form-field appearance="outline">
+        <mat-label>Perfil</mat-label>
+        <input matInput type="text" name="perfil" placeholder="perfil" disabled="true" [(ngModel)]="user.profile">
+    </mat-form-field>
+</form>
+<div mat-dialog-actions>
+  <button mat-flat-button color="primary" type="submit" (click)="onSubmit()">Salvar</button>
+  <button mat-stroked-button color="primary" (click)="close()">Cancelar</button>
+</div>
