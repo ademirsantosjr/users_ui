@@ -1,0 +1,6 @@
+<h1 mat-dialog-title>{{ title }}</h1>
+<div mat-dialog-content [innerHtml]="message"></div>
+<div mat-dialog-actions>
+  <button mat-stroked-button color="primary" (click)="onConfirm()">Sim</button>
+  <button mat-flat-button  color="primary" (click)="onDismiss()">Não</button>
+</div>

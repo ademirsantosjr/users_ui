@@ -30,7 +30,7 @@
       <th mat-header-cell *matHeaderCellDef> Ações </th>
       <td mat-cell *matCellDef="let user">
         <button mat-stroked-button class="action-button" >Editar</button>
-        <button mat-stroked-button color="warn" class="action-button" >Remover</button>
+        <button mat-stroked-button color="warn" class="action-button" (click)="delete(user)">Remover</button>
       </td>
     </ng-container>
 
