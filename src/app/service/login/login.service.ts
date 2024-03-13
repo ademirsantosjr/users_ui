@@ -4,14 +4,16 @@ import { TokenData } from '../../model/tokendata';
 import { Observable, Subject } from 'rxjs';
 import { Login } from '../../model/login';
 import { IRefreshToken } from '../../model/refreshtoken';
+import { environment } from '../../../environments/environment.development';
+import { constants } from '../../constants/constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
 
-  private urlSignin: string = 'http://localhost:8080/auth/signin';
-  private urlRefreshToken: string = 'http://localhost:8080/auth/refresh';
+  private urlSignin: string = `${environment.apiUrl}/auth/signin`;
+  private urlRefreshToken: string = `${environment.apiUrl}/auth/refresh`;
 
   public $refreshToken = new Subject<boolean>;
   public $tokenRefreshed = new Subject<boolean>;
@@ -35,7 +37,7 @@ export class LoginService {
     this.http.put<TokenData>(url, this.getRefreshToken())
       .subscribe({
         next: ((res: TokenData) => {
-          localStorage.setItem('token', JSON.stringify(res));
+          localStorage.setItem(`${constants.localStorage.tokenDefinition}`, JSON.stringify(res));
           this.$tokenRefreshed.next(true);
         })
       });
@@ -45,7 +47,7 @@ export class LoginService {
 
     let tokenData: TokenData = new TokenData(); 
   
-    const localData: string | null = localStorage.getItem('token');
+    const localData: string | null = localStorage.getItem(`${constants.localStorage.tokenDefinition}`);
     
     if (localData != null) {
       tokenData = JSON.parse(localData);

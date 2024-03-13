@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import { constants } from '../../constants/constants';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +39,7 @@ export class LoginComponent {
         next: (res: TokenData) => {
           if(res.authenticated) {
             alert('Login realizado com sucesso.');
-            localStorage.setItem('token', JSON.stringify(res));
+            localStorage.setItem(`${constants.localStorage.tokenDefinition}`, JSON.stringify(res));
             this.router.navigateByUrl('/users');
           }
         },

@@ -3,11 +3,12 @@ import { LoginComponent } from './pages/login/login.component';
 import { LayoutComponent } from './pages/layout/layout.component';
 import { UsersComponent } from './pages/users/users.component';
 import { authGuard } from './service/auth.guard';
+import { constants } from './constants/constants';
 
 export const routes: Routes = [
     {
         path: '', 
-        redirectTo:'/login', 
+        redirectTo:`/${constants.path.loginPage}`, 
         pathMatch: 'full'
     },
     {

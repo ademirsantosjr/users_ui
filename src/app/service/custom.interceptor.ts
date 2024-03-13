@@ -3,13 +3,14 @@ import { TokenData } from '../model/tokendata';
 import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { LoginService } from './login/login.service';
+import { constants } from '../constants/constants';
 
 export const customInterceptor: HttpInterceptorFn = (req, next) => {
   const loginService = inject(LoginService);
 
   let tokenData: TokenData = new TokenData(); 
   
-  const localData: string | null = localStorage.getItem('token');
+  const localData: string | null = localStorage.getItem(`${constants.localStorage.tokenDefinition}`);
   
   if (localData != null) {
     tokenData = JSON.parse(localData);
