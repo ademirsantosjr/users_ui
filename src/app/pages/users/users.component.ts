@@ -12,7 +12,9 @@ import { IPage } from '../../dto/pageusers';
 import { FormControl } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { distinctUntilChanged, fromEvent, switchMap, tap } from 'rxjs';
-import { HttpParams } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmacaoDialogComponent } from '../../modal/confirmacao.dialog/confirmacao.dialog.component';
+import { InfoDialogComponent } from '../../modal/info.dialog/info.dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -44,7 +46,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
   @ViewChild('filter', { static: true }) filter!: ElementRef;
   searchFormControl = new FormControl('');
 
-  constructor(private userService: UserService, private loginService: LoginService) {
+  constructor(
+    private userService: UserService, 
+    private loginService: LoginService, 
+    private dialog: MatDialog) {
+
     this.loginService.$tokenRefreshed.subscribe({
       next: (res: any) => {
         this.getAllUsers();
@@ -92,6 +98,39 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   addNew() {
 
+  }
+
+  delete(user: IUser) {
+    this.dialog.open(ConfirmacaoDialogComponent, {
+      data: {
+        title: 'Deseja realmente remover o usuário?',
+        message: `
+          <p>Nome: ${user.name}</p>
+          <p>E-mail: ${user.email}</p>
+        `
+      }
+    })
+    .afterClosed().subscribe((isAccept: boolean) => {
+      if (isAccept) {
+        this.userService.deleteByUsername(user.name)
+          .subscribe({
+            next: () => {
+              this.dialog.open(InfoDialogComponent, {
+                data: {
+                  title: 'Tudo Certo!',
+                  message: `
+                    Usuário removido com sucesso!
+                  `
+                }
+              });
+              this.getAllUsers();
+            },
+            error: (err) => {
+              alert('Ops! Houve um erro ao tentar remover o usuário.');
+            }
+          });
+      }
+    })
   }
 
   addEventToFilter() {

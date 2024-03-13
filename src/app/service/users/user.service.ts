@@ -22,4 +22,8 @@ export class UserService {
     const params = {params: {pageNumber, pageSize}};
     return this.http.get<IPage<IUser>>(url, params);
   }
+
+  deleteByUsername(username: string): Observable<void> {
+    return this.http.delete<void>(`http://localhost:8080/users/${username}`);
+  }
 }
