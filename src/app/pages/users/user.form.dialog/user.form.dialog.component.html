@@ -16,7 +16,11 @@
     }
     <mat-form-field appearance="outline">
         <mat-label>Perfil</mat-label>
-        <input matInput type="text" name="perfil" placeholder="perfil" disabled="true" [(ngModel)]="user.profile">
+        <mat-select [(value)]="user.profile">
+            @for (profile of profiles; track profile) {
+                <mat-option [value]="profile">{{ profile }}</mat-option>
+            }
+        </mat-select>
     </mat-form-field>
 </form>
 <div mat-dialog-actions>

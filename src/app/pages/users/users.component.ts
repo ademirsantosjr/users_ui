@@ -16,6 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmacaoDialogComponent } from '../../modal/confirmacao.dialog/confirmacao.dialog.component';
 import { InfoDialogComponent } from '../../modal/info.dialog/info.dialog.component';
 import { UserFormDialogComponent } from './user.form.dialog/user.form.dialog.component';
+import { ProfileService } from '../../service/profile/profile.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-users',
@@ -48,7 +50,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   constructor(
     private userService: UserService, 
-    private loginService: LoginService, 
+    private loginService: LoginService,
+    private profileService: ProfileService,
     private dialog: MatDialog) {
 
     this.loginService.$tokenRefreshed.subscribe({
@@ -97,9 +100,27 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   create() {
+    const profileOptions = this.profileService.findAll()
+      .subscribe({
+        next: (profiles: string[]) => {
+          this.openCreateDialog(profiles);
+        },
+        error: (err: HttpErrorResponse) => {
+          alert("Ops! Não foi possível carregar as opções de perfil.")
+        }
+      });
+  }
+
+  openCreateDialog(profileOptions: string[]) {
+    if (profileOptions.length === 0) {
+      alert("Nenhuma opção de perfil de usuário foi encontrada.");
+      return;
+    }
+
     this.dialog.open(UserFormDialogComponent, {
       data: {
-        title: 'Novo Usuário'
+        title: 'Novo Usuário',
+        profiles: profileOptions
       },
       disableClose: true
     })
@@ -119,7 +140,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
             this.getAllUsers();
           },
           error: (err) => {
-            console.log(err)
             alert('Ops! Não foi possível salvar o usuário!');
           } 
         })
@@ -127,15 +147,35 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   edit(user: IUser) {
+    const profileOptions = this.profileService.findAll()
+    .subscribe({
+      next: (profiles: string[]) => {
+        this.openEditDialog(user, profiles);
+      },
+      error: (err: HttpErrorResponse) => {
+        alert("Ops! Não foi possível carregar as opções de perfil.")
+      }
+    });
+  }
+
+  openEditDialog(user: IUser, profileOptions: string[]) {
+    if (profileOptions.length === 0) {
+      alert("Nenhuma opção de perfil de usuário foi encontrada.");
+      return;
+    }
+
     const nameBeforeUpdate = user.name;
+
     this.dialog.open(UserFormDialogComponent, {
       data: {
         title: 'Editar Usuário',
-        user: {name: user.name, email: user.email, profile: user.profile} as IUser
+        user: {name: user.name, email: user.email, profile: user.profile} as IUser,
+        profiles: profileOptions
       },
       disableClose: true
     })
     .afterClosed().subscribe((user: IUser) => {
+      if (user == null) return;
       this.userService.updateByName(user, nameBeforeUpdate)
         .subscribe({
           next: () => {

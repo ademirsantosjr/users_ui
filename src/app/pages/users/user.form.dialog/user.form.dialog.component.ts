@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { IUser } from '../../../model/user';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-user.form.dialog',
@@ -14,7 +15,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
     MatFormFieldModule, 
     MatInputModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSelectModule
   ],
   templateUrl: './user.form.dialog.component.html',
   styleUrl: './user.form.dialog.component.css'
@@ -23,6 +25,7 @@ export class UserFormDialogComponent {
 
   title = 'Formulário';
   user: IUser = {name: '', email: '', profile: '', password: ''};
+  profiles: string[] = [];
 
   constructor(
     public matDialogRef: MatDialogRef<UserFormDialogComponent>,
@@ -31,10 +34,10 @@ export class UserFormDialogComponent {
 
   ngOnInit() {
     this.title = this.data.title;
+    this.profiles = this.data.profiles;
     if (this.data.user != null) {
       this.user = this.data.user;
-    }
-    
+    }    
   }
 
   onSubmit() {
