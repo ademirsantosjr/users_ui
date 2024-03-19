@@ -26,6 +26,7 @@ export class LayoutComponent implements AfterViewInit {
   constructor(private router: Router) {
 
   }
+  
   ngAfterViewInit(): void {
     this.user = JSON.parse(`${localStorage.getItem('token')}`).username;
   }
