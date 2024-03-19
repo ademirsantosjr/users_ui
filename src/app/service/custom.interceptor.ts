@@ -51,7 +51,7 @@ export const customInterceptor: HttpInterceptorFn = (req, next) => {
           data: {
             title: 'Operação não Autorizada!',
             message: `
-              <p>Entre em contato com o Administrador do Sistma.</p>
+              <p>Entre em contato com o Administrador do Sistema.</p>
             `
           }
         });

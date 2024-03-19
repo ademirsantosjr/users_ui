@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,10 +19,16 @@ import { constants as constants } from '../../constants/constants';
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css'
 })
-export class LayoutComponent {
+export class LayoutComponent implements AfterViewInit {
+
+  user: string | null = '';
 
   constructor(private router: Router) {
 
+  }
+  
+  ngAfterViewInit(): void {
+    this.user = JSON.parse(`${localStorage.getItem('token')}`).username;
   }
 
   logout() {

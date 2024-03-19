@@ -1,7 +1,9 @@
 <mat-toolbar color="primary">
   <span>Cadastro de Usuários</span>
   <span class="toolbar-spacer"></span>
-  <button mat-button class="example-icon" 
+  <mat-icon>account_circle</mat-icon>
+  <div id="user">{{ user }}</div>
+  <button mat-flat-button color="secondary" class="example-icon" 
           aria-label="Example icon-button with share icon"
           (click)="logout()">
       Sair
