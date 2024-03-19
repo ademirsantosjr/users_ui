@@ -9,12 +9,11 @@ import {MatButtonModule} from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { IPage } from '../../dto/pageusers';
-import { FormControl } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { distinctUntilChanged, fromEvent, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, fromEvent, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmacaoDialogComponent } from '../../modal/confirmacao.dialog/confirmacao.dialog.component';
-import { InfoDialogComponent } from '../../modal/info.dialog/info.dialog.component';
+import { ConfirmacaoDialogComponent } from '../../dialog/confirmacao.dialog/confirmacao.dialog.component';
+import { InfoDialogComponent } from '../../dialog/info.dialog/info.dialog.component';
 import { UserFormDialogComponent } from './user.form.dialog/user.form.dialog.component';
 import { ProfileService } from '../../service/profile/profile.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -93,8 +92,18 @@ export class UsersComponent implements OnInit, AfterViewInit {
           this.pageSize = pagedUsers.pageable.pageSize;
           this.users = pagedUsers.content
         },
-        error: (err) => {
-          alert('Erro ao carregar a lista de usuários!')
+        error: (err: HttpErrorResponse) => {
+          if (err.status === 403 || err.status === 401) {
+            return;
+          }
+          this.dialog.open(InfoDialogComponent, {
+            data: {
+              title: 'Ops! Algo deu errado.',
+              message: `
+                <p>Erro ao carregar a lista de usuários!</p>
+              `
+            }
+          });
         }
       });
   }
@@ -106,14 +115,30 @@ export class UsersComponent implements OnInit, AfterViewInit {
           this.openCreateDialog(profiles);
         },
         error: (err: HttpErrorResponse) => {
-          alert("Ops! Não foi possível carregar as opções de perfil.")
+          if (!(err.status === 401 || err.status === 403)) {
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'Ops! Algo deu errado.',
+                message: `
+                  <p>Não foi possível carregar as opções de perfil.</p>
+                `
+              }
+            });
+          }
         }
       });
   }
 
   openCreateDialog(profileOptions: string[]) {
     if (profileOptions.length === 0) {
-      alert("Nenhuma opção de perfil de usuário foi encontrada.");
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Ops! Algo deu errado.',
+          message: `
+            <p>Nenhuma opção de perfil de usuário foi encontrada.</p>
+          `
+        }
+      });
       return;
     }
 
@@ -139,8 +164,17 @@ export class UsersComponent implements OnInit, AfterViewInit {
             });
             this.getAllUsers();
           },
-          error: (err) => {
-            alert('Ops! Não foi possível salvar o usuário!');
+          error: (err: HttpErrorResponse) => {
+            if (!(err.status === 401 || err.status === 403)) {
+              this.dialog.open(InfoDialogComponent, {
+                data: {
+                  title: 'Ops! Algo deu errado.',
+                  message: `
+                    <p>Não foi possível salvar o usuário!</p>
+                  `
+                }
+              });
+            }
           } 
         })
     });
@@ -153,14 +187,30 @@ export class UsersComponent implements OnInit, AfterViewInit {
         this.openEditDialog(user, profiles);
       },
       error: (err: HttpErrorResponse) => {
-        alert("Ops! Não foi possível carregar as opções de perfil.")
+        if (!(err.status === 401 || err.status === 403)) {
+          this.dialog.open(InfoDialogComponent, {
+            data: {
+              title: 'Ops! Algo deu errado.',
+              message: `
+                <p>Não foi possível carregar as opções de perfil.</p>
+              `
+            }
+          });
+        }
       }
     });
   }
 
   openEditDialog(user: IUser, profileOptions: string[]) {
     if (profileOptions.length === 0) {
-      alert("Nenhuma opção de perfil de usuário foi encontrada.");
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Erro',
+          message: `
+            <p>Nenhuma opção de perfil de usuário foi encontrada.</p>
+          `
+        }
+      });
       return;
     }
 
@@ -190,7 +240,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
             this.getAllUsers();
           },
           error: (err) => {
-            alert('Ops! Houve um erro ao atualizar o usuário.');
+
           } 
         })
     });
@@ -222,7 +272,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
               this.getAllUsers();
             },
             error: (err) => {
-              alert('Ops! Houve um erro ao remover o usuário.');
+
             }
           });
       }
