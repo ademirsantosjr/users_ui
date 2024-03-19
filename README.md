@@ -15,8 +15,11 @@ Configure as variáveis de ambiente na pasta `environments`. No arquivo `environ
 <br>
 Para executar a aplicação back-end acesse [Users API](https://github.com/ademirsantosjr/users_api) e siga as instruções.
 ### Passo a Passo
-1. Acessar a raiz do projeto (onde se encontra pasta `/src`)
-2. Executar o comando a seguir:
+1. Acessar a raiz do projeto (onde se encontra pasta `/src`) e instalar as dependências:
+```bash
+npm install
+```
+2. Em seguida executar a aplicação com o comando:
 ```bash
 ng serve
 ```
