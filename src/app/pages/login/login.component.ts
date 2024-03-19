@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import { constants } from '../../constants/constants';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoDialogComponent } from '../../dialog/info.dialog/info.dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +31,8 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private loginService: LoginService) {
+    private loginService: LoginService,
+    private dialog: MatDialog) {
     this.login = new Login();
   }
 
@@ -38,13 +41,20 @@ export class LoginComponent {
       .subscribe({
         next: (res: TokenData) => {
           if(res.authenticated) {
-            alert('Login realizado com sucesso.');
             localStorage.setItem(`${constants.localStorage.tokenDefinition}`, JSON.stringify(res));
             this.router.navigateByUrl('/users');
           }
         },
         error: (err) => {
-          alert('Falha no Login! Verifique suas credenciais.');
+          this.dialog.open(InfoDialogComponent, {
+            data: {
+              title: 'Erro de Login',
+              message: `
+                <p>Senha e(ou) Usuário incorretos!</p>
+                <p>Verifique suas credenciais.</p>
+              `
+            }
+          });
         }
       });
   }
