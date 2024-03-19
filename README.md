@@ -1,5 +1,6 @@
 # Interface para gerenciamento de usuários
 Sistema para gerenciamento de usuários e operações básicas CRUD.
+> Para executar a aplicação back-end acesse [Users API](https://github.com/ademirsantosjr/users_api) e siga as instruções.
 
 ## Ferramentas utilizadas
 - Angular CLI 17.2.3
